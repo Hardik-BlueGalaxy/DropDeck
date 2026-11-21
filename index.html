@@ -1,0 +1,2356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DropDeck — Digital Assets, Files, 3D, Games & Apps Marketplace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.35);
+      border-radius: 9999px;
+    }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased selection:bg-indigo-500 selection:text-white">
+  <div id="app" class="min-h-screen flex flex-col lg:flex-row">
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden lg:hidden"></div>
+
+    <!-- Left Sidebar -->
+    <aside id="sidebar" class="fixed lg:sticky top-0 left-0 z-50 h-screen w-64 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col transition-transform duration-200 -translate-x-full lg:translate-x-0">
+      <!-- Brand -->
+      <div class="h-16 px-5 flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
+        <button id="brand-home-btn" class="flex items-center gap-2.5 text-left group">
+          <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm group-hover:bg-indigo-700 transition-colors">
+            <i data-lucide="layers" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <span class="font-bold text-lg tracking-tight text-slate-900 dark:text-white block leading-none">DropDeck</span>
+            <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Digital Marketplace</span>
+          </div>
+        </button>
+        <button id="close-sidebar-btn" class="lg:hidden p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Close sidebar">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 overflow-y-auto scrollbar-thin px-3 py-4 space-y-6">
+        <div>
+          <p class="px-3 mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Marketplace</p>
+          <div class="space-y-1">
+            <button data-nav="marketplace" data-cat="all" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-colors">
+              <span class="flex items-center gap-2.5"><i data-lucide="compass" class="w-4 h-4"></i> Explore All</span>
+              <span id="count-all" class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">0</span>
+            </button>
+            <button data-nav="marketplace" data-cat="Files" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-colors">
+              <span class="flex items-center gap-2.5"><i data-lucide="file-archive" class="w-4 h-4"></i> Files</span>
+              <span id="count-Files" class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">0</span>
+            </button>
+            <button data-nav="marketplace" data-cat="3D Assets" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-colors">
+              <span class="flex items-center gap-2.5"><i data-lucide="box" class="w-4 h-4"></i> 3D Assets</span>
+              <span id="count-3D Assets" class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">0</span>
+            </button>
+            <button data-nav="marketplace" data-cat="Games" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-colors">
+              <span class="flex items-center gap-2.5"><i data-lucide="gamepad-2" class="w-4 h-4"></i> Games</span>
+              <span id="count-Games" class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">0</span>
+            </button>
+            <button data-nav="marketplace" data-cat="Apps" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-colors">
+              <span class="flex items-center gap-2.5"><i data-lucide="app-window" class="w-4 h-4"></i> Apps</span>
+              <span id="count-Apps" class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">0</span>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <p class="px-3 mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Workspace</p>
+          <div class="space-y-1">
+            <button id="nav-library" data-nav="library" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-colors">
+              <span class="flex items-center gap-2.5"><i data-lucide="download" class="w-4 h-4"></i> My Library</span>
+              <span id="count-library" class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">0</span>
+            </button>
+            <button id="nav-seller" data-nav="seller" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-colors">
+              <span class="flex items-center gap-2.5"><i data-lucide="store" class="w-4 h-4"></i> Seller Studio</span>
+              <span id="count-seller" class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">0</span>
+            </button>
+            <button id="nav-wallet" data-nav="wallet" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-colors">
+              <span class="flex items-center gap-2.5"><i data-lucide="wallet" class="w-4 h-4"></i> Wallet & Orders</span>
+            </button>
+            <button id="nav-settings" data-nav="settings" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-colors">
+              <span class="flex items-center gap-2.5"><i data-lucide="settings" class="w-4 h-4"></i> Settings</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Zero-Tax Status Pill -->
+        <div class="mx-1 p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60">
+          <div class="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-semibold text-xs mb-1">
+            <i data-lucide="shield-check" class="w-4 h-4 shrink-0"></i>
+            <span id="sidebar-tax-title">0% Tax Mode Active</span>
+          </div>
+          <p id="sidebar-tax-desc" class="text-[11px] text-emerald-700/80 dark:text-emerald-300/80 leading-relaxed">
+            Tax-free digital purchases enabled where supported by regional rules.
+          </p>
+        </div>
+      </nav>
+
+      <!-- Active Account Footer -->
+      <div class="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70">
+        <div id="sidebar-account-box"></div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 min-w-0 flex flex-col">
+      <!-- Top Bar -->
+      <header class="sticky top-0 z-30 h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 flex-1 min-w-0">
+          <button id="open-sidebar-btn" class="lg:hidden p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Open menu">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+
+          <!-- Search Input -->
+          <div class="relative flex-1 max-w-xl">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+            <input id="search-input" type="text" placeholder="Search files, 3D assets, games, apps, tags, or sellers..." class="w-full pl-10 pr-9 py-2 text-sm rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition-all" />
+            <button id="clear-search-btn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" aria-label="Clear search">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          <!-- Currency Selector -->
+          <div class="relative">
+            <select id="currency-select" aria-label="Display currency" class="appearance-none pl-3 pr-8 py-2 text-xs sm:text-sm font-semibold rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 hover:border-slate-300 focus:outline-none focus:border-indigo-500 cursor-pointer">
+            </select>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+          </div>
+
+          <!-- Publish Button -->
+          <button id="top-publish-btn" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-xs transition-colors">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Publish</span>
+          </button>
+
+          <!-- Cart Button -->
+          <button id="cart-btn" class="relative p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors" aria-label="Open cart">
+            <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+            <span id="cart-badge" class="hidden absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 rounded-full bg-indigo-600 text-white text-[11px] font-bold flex items-center justify-center">0</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Dynamic Main View -->
+      <main id="main-view" class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- Modal Backdrop & Container -->
+  <div id="modal-root" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto">
+    <div id="modal-card" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden my-auto">
+      <div id="modal-header" class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0">
+        <h3 id="modal-title" class="text-lg font-bold text-slate-900 dark:text-white"></h3>
+        <button id="modal-close-btn" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="modal-body" class="p-6 overflow-y-auto scrollbar-thin flex-1"></div>
+    </div>
+  </div>
+
+  <!-- Cart Slide-Over Drawer -->
+  <div id="cart-drawer-root" class="fixed inset-0 z-50 hidden">
+    <div id="cart-drawer-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-xs"></div>
+    <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col">
+      <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="shopping-bag" class="w-5 h-5 text-indigo-600"></i>
+          <h3 class="text-lg font-bold">Your Cart</h3>
+        </div>
+        <button id="close-cart-btn" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="cart-drawer-body" class="flex-1 overflow-y-auto scrollbar-thin p-6"></div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // DropDeck Core State, Currencies, Zero-Tax Rules & IndexedDB File Storage
+    // =========================================================================
+
+    const CURRENCIES = {
+      USD: { symbol: '$', name: 'US Dollar', decimals: 2, rateFromUSD: 1.0 },
+      INR: { symbol: '₹', name: 'Indian Rupee', decimals: 2, rateFromUSD: 93.10 },
+      EUR: { symbol: '€', name: 'Euro', decimals: 2, rateFromUSD: 0.9103 },
+      JPY: { symbol: '¥', name: 'Japanese Yen', decimals: 0, rateFromUSD: 158.55 },
+      GBP: { symbol: '£', name: 'British Pound', decimals: 2, rateFromUSD: 0.7641 },
+      CNY: { symbol: '¥', name: 'Chinese Yuan (Onshore)', decimals: 2, rateFromUSD: 6.6805 },
+      CNH: { symbol: '¥', name: 'Chinese Yuan (Offshore)', decimals: 2, rateFromUSD: 6.6850 },
+      AUD: { symbol: 'A$', name: 'Australian Dollar', decimals: 2, rateFromUSD: 1.5008 },
+      CAD: { symbol: 'C$', name: 'Canadian Dollar', decimals: 2, rateFromUSD: 1.4344 },
+      CHF: { symbol: 'CHF ', name: 'Swiss Franc', decimals: 2, rateFromUSD: 0.8396 },
+      HKD: { symbol: 'HK$', name: 'Hong Kong Dollar', decimals: 2, rateFromUSD: 7.7800 },
+      SGD: { symbol: 'S$', name: 'Singapore Dollar', decimals: 2, rateFromUSD: 1.2890 },
+    };
+
+    const TAX_JURISDICTIONS = [
+      { id: 'exempt_global', name: 'Zero-Tax Digital Goods Rule (Personal / Small Creator)', rate: 0, supported: true, note: '0% tax applied under small-creator / direct digital export thresholds where supported by local rules.' },
+      { id: 'hk_sg_exempt', name: 'Hong Kong / Non-Registered Digital Export', rate: 0, supported: true, note: '0% VAT/GST applied for qualifying non-registered digital exports.' },
+      { id: 'us_exempt_state', name: 'US Tax-Exempt / Zero Sales Tax State (DE, OR, MT, NH, AK)', rate: 0, supported: true, note: '0% state sales tax applied in non-sales-tax jurisdictions or exempt digital categories.' },
+      { id: 'b2b_reverse', name: 'B2B Reverse Charge (Tax-Registered Buyer)', rate: 0, supported: true, note: '0% charged at checkout; buyer accounts for applicable local tax under reverse-charge rules.' },
+      { id: 'standard_custom', name: 'Custom Local Tax Rate (If Required by Law)', rate: 0, supported: false, note: 'Use a custom tax percentage when your jurisdiction requires tax collection.' },
+    ];
+
+    const CATEGORIES = ['Files', '3D Assets', 'Games', 'Apps'];
+
+    const STORAGE_KEY = 'dropdeck_state_v1';
+
+    const DEFAULT_STATE = {
+      accounts: [], // Strictly empty on start — no demo/test/useless accounts
+      activeAccountId: null,
+      products: [], // Strictly empty on start — no demo/test/useless listings
+      orders: [],
+      cart: [],
+      reviews: [], // { id, productId, buyerId, buyerName, rating, comment, createdAt }
+      settings: {
+        displayCurrency: 'USD',
+        darkMode: false,
+        taxRuleId: 'exempt_global',
+        zeroTaxEnabled: true,
+        customTaxRate: 0,
+        customRates: {},
+        gatewayMode: 'local_direct',
+        gatewayPublicKey: '',
+        gatewayWebhookUrl: '',
+        catalogUrl: './catalog.json',
+      },
+      ui: {
+        view: 'marketplace',
+        category: 'all',
+        search: '',
+        sort: 'newest',
+        priceFilter: 'all',
+        minPrice: '',
+        maxPrice: '',
+        taxFreeOnly: false,
+      },
+    };
+
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return structuredClone(DEFAULT_STATE);
+        const parsed = JSON.parse(raw);
+        return {
+          ...structuredClone(DEFAULT_STATE),
+          ...parsed,
+          settings: { ...DEFAULT_STATE.settings, ...(parsed.settings || {}) },
+          ui: { ...DEFAULT_STATE.ui, ...(parsed.ui || {}) },
+        };
+      } catch (e) {
+        return structuredClone(DEFAULT_STATE);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        showToast('Storage warning: could not save full state to localStorage.', 'error');
+      }
+    }
+
+    // IndexedDB for storing real uploaded files (Blobs)
+    const DB_NAME = 'DropDeckFilesDB';
+    const DB_VERSION = 1;
+    const STORE_FILES = 'files';
+
+    function openFilesDB() {
+      return new Promise((resolve, reject) => {
+        if (!window.indexedDB) {
+          reject(new Error('IndexedDB unavailable'));
+          return;
+        }
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE_FILES)) {
+            db.createObjectStore(STORE_FILES, { keyPath: 'id' });
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function saveFileBlob(id, file) {
+      const db = await openFilesDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_FILES, 'readwrite');
+        tx.objectStore(STORE_FILES).put({
+          id,
+          name: file.name,
+          type: file.type || 'application/octet-stream',
+          size: file.size,
+          blob: file,
+        });
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    async function getFileRecord(id) {
+      const db = await openFilesDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_FILES, 'readonly');
+        const req = tx.objectStore(STORE_FILES).get(id);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function deleteFileRecord(id) {
+      try {
+        const db = await openFilesDB();
+        const tx = db.transaction(STORE_FILES, 'readwrite');
+        tx.objectStore(STORE_FILES).delete(id);
+      } catch (e) {}
+    }
+
+    // =========================================================================
+    // Currency & Formatting Helpers
+    // =========================================================================
+
+    function getRate(code) {
+      if (state.settings.customRates && typeof state.settings.customRates[code] === 'number' && state.settings.customRates[code] > 0) {
+        return state.settings.customRates[code];
+      }
+      return CURRENCIES[code] ? CURRENCIES[code].rateFromUSD : 1;
+    }
+
+    function convertAmount(amount, fromCode, toCode) {
+      const num = Number(amount) || 0;
+      if (fromCode === toCode) return num;
+      const fromRate = getRate(fromCode);
+      const toRate = getRate(toCode);
+      const usd = num / fromRate;
+      return usd * toRate;
+    }
+
+    function formatMoney(amount, code = state.settings.displayCurrency) {
+      const cur = CURRENCIES[code] || CURRENCIES.USD;
+      const num = Number(amount) || 0;
+      const formatted = num.toLocaleString(undefined, {
+        minimumFractionDigits: cur.decimals,
+        maximumFractionDigits: cur.decimals,
+      });
+      return `${cur.symbol}${formatted}`;
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes || bytes <= 0) return 'External / Link';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      let i = 0;
+      let val = bytes;
+      while (val >= 1024 && i < units.length - 1) {
+        val /= 1024;
+        i++;
+      }
+      return `${val.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
+    }
+
+    function uid(prefix = 'id') {
+      return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function getActiveAccount() {
+      return state.accounts.find((a) => a.id === state.activeAccountId) || null;
+    }
+
+    function canBuy(acc) {
+      return acc && (acc.role === 'Buyer' || acc.role === 'User');
+    }
+
+    function canSell(acc) {
+      return acc && (acc.role === 'Seller' || acc.role === 'User');
+    }
+
+    function getTaxRatePercent() {
+      if (state.settings.zeroTaxEnabled) return 0;
+      const rule = TAX_JURISDICTIONS.find((r) => r.id === state.settings.taxRuleId);
+      if (rule && rule.supported) return 0;
+      return Math.max(0, Math.min(50, Number(state.settings.customTaxRate) || 0));
+    }
+
+    function getProductRating(productId) {
+      const list = state.reviews.filter((r) => r.productId === productId);
+      if (!list.length) return { avg: 0, count: 0 };
+      const sum = list.reduce((acc, r) => acc + r.rating, 0);
+      return { avg: sum / list.length, count: list.length };
+    }
+
+    function hasPurchased(accountId, productId) {
+      if (!accountId) return false;
+      return state.orders.some((o) => o.buyerId === accountId && o.items.some((it) => it.productId === productId));
+    }
+
+    // =========================================================================
+    // Toast & Modal Utilities
+    // =========================================================================
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const colors = {
+        success: 'bg-emerald-600 text-white',
+        error: 'bg-rose-600 text-white',
+        info: 'bg-slate-900 dark:bg-slate-800 text-white border border-slate-700',
+      };
+      const el = document.createElement('div');
+      el.className = `pointer-events-auto px-4 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center justify-between gap-3 transition-all ${colors[type] || colors.info}`;
+      el.innerHTML = `<span>${escapeHtml(message)}</span>`;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => el.remove(), 250);
+      }, 3200);
+    }
+
+    function openModal(title, bodyHtml, maxWidth = 'max-w-2xl') {
+      const root = document.getElementById('modal-root');
+      const card = document.getElementById('modal-card');
+      card.className = `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full ${maxWidth} max-h-[90vh] flex flex-col overflow-hidden my-auto`;
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-body').innerHTML = bodyHtml;
+      root.classList.remove('hidden');
+      root.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closeModal() {
+      const root = document.getElementById('modal-root');
+      root.classList.add('hidden');
+      root.classList.remove('flex');
+    }
+
+    // =========================================================================
+    // Account Creation, Switching & Auth
+    // =========================================================================
+
+    function openAccountModal(defaultRole = 'User') {
+      const existingAccountsHtml = state.accounts.length
+        ? `
+          <div class="mb-6">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2.5">Switch Existing Account</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              ${state.accounts
+                .map(
+                  (acc) => `
+                <button type="button" data-switch-acc="${acc.id}" class="flex items-center justify-between p-3 rounded-xl border ${
+                  acc.id === state.activeAccountId
+                    ? 'border-indigo-500 bg-indigo-50/70 dark:bg-indigo-950/30'
+                    : 'border-slate-200 dark:border-slate-700 hover:border-indigo-300'
+                } text-left transition-colors">
+                  <div class="min-w-0">
+                    <p class="font-semibold text-sm truncate">${escapeHtml(acc.name)}</p>
+                    <p class="text-xs text-slate-500 truncate">${escapeHtml(acc.email)}</p>
+                  </div>
+                  <span class="shrink-0 ml-2 px-2 py-0.5 rounded-full text-[11px] font-semibold ${roleBadgeClass(acc.role)}">${acc.role}</span>
+                </button>
+              `
+                )
+                .join('')}
+            </div>
+          </div>
+          <div class="border-t border-slate-200 dark:border-slate-800 pt-5 mb-4">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Or Open a New Account</h4>
+          </div>
+        `
+        : '';
+
+      openModal(
+        state.accounts.length ? 'Account Switcher & Registration' : 'Open a DropDeck Account',
+        `
+        ${existingAccountsHtml}
+        <form id="create-account-form" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Full Name / Brand Name *</label>
+              <input name="name" required type="text" placeholder="e.g. Aarav Studio" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Email Address *</label>
+              <input name="email" required type="email" placeholder="you@domain.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:border-indigo-500" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">Account Type *</label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              ${[
+                { role: 'Buyer', desc: 'Buy & download Files, 3D Assets, Games & Apps', icon: 'shopping-bag' },
+                { role: 'Seller', desc: 'Publish products & earn real money payouts', icon: 'store' },
+                { role: 'User', desc: 'Full access: Both Buyer & Seller capabilities', icon: 'sparkles' },
+              ]
+                .map(
+                  (r) => `
+                <label class="cursor-pointer">
+                  <input type="radio" name="role" value="${r.role}" ${r.role === defaultRole ? 'checked' : ''} class="peer sr-only" />
+                  <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 peer-checked:border-indigo-600 peer-checked:bg-indigo-50/70 dark:peer-checked:bg-indigo-950/30 transition-all h-full">
+                    <div class="flex items-center gap-2 font-bold text-sm mb-1">
+                      <i data-lucide="${r.icon}" class="w-4 h-4 text-indigo-600"></i>
+                      <span>${r.role}</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">${r.desc}</p>
+                  </div>
+                </label>
+              `
+                )
+                .join('')}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Preferred Currency</label>
+              <select name="currency" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                ${Object.keys(CURRENCIES)
+                  .map((c) => `<option value="${c}" ${c === state.settings.displayCurrency ? 'selected' : ''}>${c} — ${CURRENCIES[c].name}</option>`)
+                  .join('')}
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Payout / Payment Handle (Optional)</label>
+              <input name="payoutHandle" type="text" placeholder="UPI ID, PayPal, or Bank Ref" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:border-indigo-500" />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-2">
+            <button type="button" id="cancel-acc-btn" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-xs">Create Account</button>
+          </div>
+        </form>
+      `
+      );
+
+      document.querySelectorAll('[data-switch-acc]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.activeAccountId = btn.dataset.switchAcc;
+          const acc = getActiveAccount();
+          if (acc && CURRENCIES[acc.currency]) {
+            state.settings.displayCurrency = acc.currency;
+          }
+          saveState();
+          closeModal();
+          renderAll();
+          showToast(`Switched to ${acc.name} (${acc.role})`, 'success');
+        });
+      });
+
+      document.getElementById('cancel-acc-btn').addEventListener('click', closeModal);
+      document.getElementById('create-account-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const name = fd.get('name').trim();
+        const email = fd.get('email').trim();
+        const role = fd.get('role');
+        const currency = fd.get('currency');
+        const payoutHandle = fd.get('payoutHandle').trim();
+        if (!name || !email) return;
+
+        const newAcc = {
+          id: uid('acc'),
+          name,
+          email,
+          role,
+          currency,
+          payoutHandle,
+          walletUSD: 0,
+          createdAt: new Date().toISOString(),
+        };
+        state.accounts.push(newAcc);
+        state.activeAccountId = newAcc.id;
+        state.settings.displayCurrency = currency;
+        saveState();
+        closeModal();
+        renderAll();
+        showToast(`Welcome to DropDeck, ${name}! (${role} account)`, 'success');
+      });
+    }
+
+    function roleBadgeClass(role) {
+      if (role === 'Seller') return 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300';
+      if (role === 'Buyer') return 'bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-300';
+      return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300';
+    }
+
+    // =========================================================================
+    // Product Publishing & Editing (Seller / User)
+    // =========================================================================
+
+    function openPublishModal(editProductId = null) {
+      const acc = getActiveAccount();
+      if (!acc) {
+        openAccountModal('Seller');
+        showToast('Create a Seller or User account first to publish products.', 'info');
+        return;
+      }
+      if (!canSell(acc)) {
+        showToast('Buyer-only accounts cannot publish. Switch to Seller or User in Settings.', 'error');
+        return;
+      }
+
+      const existing = editProductId ? state.products.find((p) => p.id === editProductId) : null;
+
+      openModal(
+        existing ? 'Edit Product Listing' : 'Publish New Product',
+        `
+        <form id="publish-form" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Product Title *</label>
+              <input name="title" required value="${escapeHtml(existing?.title || '')}" type="text" placeholder="e.g. Sci-Fi Mech Pack, Indie Roguelike, UI Kit..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:border-indigo-500" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Category *</label>
+              <select name="category" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                ${CATEGORIES.map((c) => `<option value="${c}" ${existing?.category === c ? 'selected' : ''}>${c}</option>`).join('')}
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">File Format / Platform *</label>
+              <input name="format" required value="${escapeHtml(existing?.format || '')}" type="text" placeholder="e.g. .GLB / .FBX, .ZIP, .EXE, .APK, .HTML" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:border-indigo-500" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Price (0 for Free) *</label>
+              <input name="price" required type="number" min="0" step="0.01" value="${existing ? existing.price : '0'}" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:border-indigo-500" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Listing Currency *</label>
+              <select name="currency" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                ${Object.keys(CURRENCIES)
+                  .map((c) => `<option value="${c}" ${(existing?.currency || state.settings.displayCurrency) === c ? 'selected' : ''}>${c} (${CURRENCIES[c].symbol.trim()})</option>`)
+                  .join('')}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Description *</label>
+            <textarea name="description" required rows="3" placeholder="Describe features, compatibility, polygon count, OS support, or what's included..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:border-indigo-500">${escapeHtml(existing?.description || '')}</textarea>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">License Type</label>
+              <select name="license" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                ${['Commercial & Personal', 'Personal Use Only', 'Royalty-Free Asset', 'MIT / Open License']
+                  .map((l) => `<option value="${l}" ${existing?.license === l ? 'selected' : ''}>${l}</option>`)
+                  .join('')}
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Tags (comma-separated)</label>
+              <input name="tags" value="${escapeHtml((existing?.tags || []).join(', '))}" type="text" placeholder="lowpoly, unity, react, indie" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:border-indigo-500" />
+            </div>
+          </div>
+
+          <!-- Real File Upload -->
+          <div class="p-4 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-200 mb-1">Attach Real Product File (Stored locally for real buyer downloads)</label>
+              <input id="pub-file-input" type="file" class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950 dark:file:text-indigo-300" />
+              ${existing?.fileName ? `<p class="text-[11px] text-emerald-600 mt-1">Current file: ${escapeHtml(existing.fileName)} (${formatBytes(existing.fileSize)})</p>` : ''}
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-200 mb-1">Or External Download URL (Optional fallback for large builds)</label>
+              <input name="externalUrl" value="${escapeHtml(existing?.externalUrl || '')}" type="url" placeholder="https://..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs focus:outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-200 mb-1">Dodo Payments Checkout Link (Optional — for real global card/UPI checkout)</label>
+              <input name="dodoPaymentUrl" value="${escapeHtml(existing?.dodoPaymentUrl || '')}" type="url" placeholder="https://checkout.dodopayments.com/buy/pdt_..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs focus:outline-none focus:border-indigo-500" />
+            </div>
+          </div>
+
+          <!-- Thumbnail Upload -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Cover Image / Thumbnail (Optional)</label>
+            <input id="pub-thumb-input" type="file" accept="image/*" class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 dark:file:bg-slate-800 dark:file:text-slate-200" />
+          </div>
+
+          <label class="flex items-start gap-2.5 p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 cursor-pointer">
+            <input type="checkbox" name="taxExempt" ${existing ? (existing.taxExempt ? 'checked' : '') : 'checked'} class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500" />
+            <span class="text-xs text-emerald-800 dark:text-emerald-300 leading-relaxed">
+              <strong>Zero-Tax Eligible Listing:</strong> Mark this digital product as tax-exempt (0% tax at checkout where supported by regional rules).
+            </span>
+          </label>
+
+          <div class="flex items-center justify-end gap-3 pt-2">
+            <button type="button" id="cancel-pub-btn" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-xs">
+              ${existing ? 'Save Changes' : 'Publish to DropDeck'}
+            </button>
+          </div>
+        </form>
+      `
+      );
+
+      document.getElementById('cancel-pub-btn').addEventListener('click', closeModal);
+      document.getElementById('publish-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const fileInput = document.getElementById('pub-file-input');
+        const thumbInput = document.getElementById('pub-thumb-input');
+
+        const selectedFile = fileInput.files && fileInput.files[0];
+        const selectedThumb = thumbInput.files && thumbInput.files[0];
+        const externalUrl = fd.get('externalUrl').trim();
+
+        if (!existing && !selectedFile && !externalUrl) {
+          showToast('Please attach a real file or provide an external download URL.', 'error');
+          return;
+        }
+
+        const productId = existing ? existing.id : uid('prod');
+        let fileId = existing?.fileId || null;
+        let fileName = existing?.fileName || '';
+        let fileSize = existing?.fileSize || 0;
+
+        if (selectedFile) {
+          fileId = uid('file');
+          try {
+            await saveFileBlob(fileId, selectedFile);
+            fileName = selectedFile.name;
+            fileSize = selectedFile.size;
+          } catch (err) {
+            showToast('Could not store file in browser IndexedDB.', 'error');
+            return;
+          }
+        }
+
+        let thumbnail = existing?.thumbnail || '';
+        if (selectedThumb) {
+          thumbnail = await readFileAsDataUrl(selectedThumb);
+        }
+
+        const productObj = {
+          id: productId,
+          sellerId: acc.id,
+          sellerName: acc.name,
+          title: fd.get('title').trim(),
+          category: fd.get('category'),
+          format: fd.get('format').trim(),
+          price: Math.max(0, Number(fd.get('price')) || 0),
+          currency: fd.get('currency'),
+          description: fd.get('description').trim(),
+          license: fd.get('license'),
+          tags: fd
+            .get('tags')
+            .split(',')
+            .map((t) => t.trim())
+            .filter(Boolean),
+          fileId,
+          fileName,
+          fileSize,
+          externalUrl,
+          dodoPaymentUrl: (fd.get('dodoPaymentUrl') || '').trim(),
+          thumbnail,
+          taxExempt: fd.get('taxExempt') === 'on',
+          downloads: existing ? existing.downloads : 0,
+          createdAt: existing ? existing.createdAt : new Date().toISOString(),
+        };
+
+        if (existing) {
+          const idx = state.products.findIndex((p) => p.id === existing.id);
+          if (idx !== -1) state.products[idx] = productObj;
+          showToast('Product updated.', 'success');
+        } else {
+          state.products.unshift(productObj);
+          showToast(`"${productObj.title}" is now live on DropDeck!`, 'success');
+        }
+
+        saveState();
+        closeModal();
+        renderAll();
+      });
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // =========================================================================
+    // Product Detail, Cart, Checkout & Real Download
+    // =========================================================================
+
+    function openProductDetail(productId) {
+      const p = state.products.find((x) => x.id === productId);
+      if (!p) return;
+      const acc = getActiveAccount();
+      const dispCur = state.settings.displayCurrency;
+      const converted = convertAmount(p.price, p.currency, dispCur);
+      const isFree = p.price === 0;
+      const owned = acc && (acc.id === p.sellerId || hasPurchased(acc.id, p.id));
+      const inCart = state.cart.includes(p.id);
+      const rating = getProductRating(p.id);
+      const reviews = state.reviews.filter((r) => r.productId === p.id);
+
+      openModal(
+        p.title,
+        `
+        <div class="space-y-5">
+          <div class="relative rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 aspect-[16/9] flex items-center justify-center">
+            ${
+              p.thumbnail
+                ? `<img src="${p.thumbnail}" alt="${escapeHtml(p.title)}" class="w-full h-full object-cover" />`
+                : `<div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br ${categoryGradient(p.category)} text-white">
+                    <i data-lucide="${categoryIcon(p.category)}" class="w-14 h-14 mb-2 opacity-90"></i>
+                    <span class="text-sm font-semibold opacity-90">${escapeHtml(p.category)} • ${escapeHtml(p.format)}</span>
+                  </div>`
+            }
+            <div class="absolute top-3 left-3 flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900/75 text-white backdrop-blur-xs">${escapeHtml(p.category)}</span>
+              ${
+                p.taxExempt
+                  ? `<span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-600/90 text-white backdrop-blur-xs">0% Tax Eligible</span>`
+                  : ''
+              }
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-1">
+                <span>By <strong class="text-slate-700 dark:text-slate-200">${escapeHtml(p.sellerName)}</strong></span>
+                <span>•</span>
+                <span>${escapeHtml(p.format)}</span>
+                <span>•</span>
+                <span>${p.fileSize ? formatBytes(p.fileSize) : 'External Link'}</span>
+              </div>
+              <div class="flex items-center gap-3 text-xs text-slate-500">
+                <span class="flex items-center gap-1 text-amber-500 font-semibold">
+                  <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                  ${rating.count ? rating.avg.toFixed(1) : 'No ratings'} (${rating.count})
+                </span>
+                <span>•</span>
+                <span>${p.downloads} downloads</span>
+                <span>•</span>
+                <span>${escapeHtml(p.license)}</span>
+              </div>
+            </div>
+
+            <div class="text-right">
+              <div class="text-2xl font-extrabold text-slate-900 dark:text-white">
+                ${isFree ? 'Free' : formatMoney(converted, dispCur)}
+              </div>
+              ${
+                !isFree && p.currency !== dispCur
+                  ? `<div class="text-xs text-slate-400">Listed at ${formatMoney(p.price, p.currency)}</div>`
+                  : ''
+              }
+            </div>
+          </div>
+
+          <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">${escapeHtml(p.description)}</p>
+
+          ${
+            p.tags.length
+              ? `<div class="flex flex-wrap gap-1.5">
+                  ${p.tags.map((t) => `<span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-medium text-slate-600 dark:text-slate-300">#${escapeHtml(t)}</span>`).join('')}
+                </div>`
+              : ''
+          }
+
+          <div class="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-200 dark:border-slate-800">
+            ${
+              owned
+                ? `<button id="detail-download-btn" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition-colors">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>${acc && acc.id === p.sellerId ? 'Download Your File' : 'Download Purchased File'}</span>
+                  </button>`
+                : `
+                  <button id="detail-cart-btn" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-semibold transition-colors">
+                    <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                    <span>${inCart ? 'In Cart (View)' : 'Add to Cart'}</span>
+                  </button>
+                  ${
+                    p.dodoPaymentUrl && !isFree
+                      ? `<button id="detail-dodo-btn" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition-colors">
+                          <i data-lucide="credit-card" class="w-4 h-4"></i>
+                          <span>Pay via Dodo Payments</span>
+                        </button>`
+                      : ''
+                  }
+                  <button id="detail-buy-btn" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-colors">
+                    <i data-lucide="zap" class="w-4 h-4"></i>
+                    <span>${isFree ? 'Get for Free' : (p.dodoPaymentUrl ? 'Local Cart Checkout' : 'Buy Now')}</span>
+                  </button>
+                `
+            }
+          </div>
+
+          <!-- Reviews Section -->
+          <div class="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
+            <h4 class="text-sm font-bold">Buyer Reviews (${reviews.length})</h4>
+            ${
+              acc && hasPurchased(acc.id, p.id) && acc.id !== p.sellerId
+                ? `
+                <form id="review-form" class="flex flex-col sm:flex-row gap-2">
+                  <select name="rating" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold">
+                    <option value="5">5 ★</option>
+                    <option value="4">4 ★</option>
+                    <option value="3">3 ★</option>
+                    <option value="2">2 ★</option>
+                    <option value="1">1 ★</option>
+                  </select>
+                  <input name="comment" required type="text" placeholder="Write a verified review..." class="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs" />
+                  <button type="submit" class="px-4 py-2 rounded-xl bg-slate-900 dark:bg-indigo-600 text-white text-xs font-semibold">Post</button>
+                </form>
+              `
+                : ''
+            }
+            ${
+              reviews.length
+                ? `<div class="space-y-2 max-h-40 overflow-y-auto scrollbar-thin">
+                    ${reviews
+                      .map(
+                        (r) => `
+                      <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-xs">
+                        <div class="flex items-center justify-between mb-1">
+                          <span class="font-semibold">${escapeHtml(r.buyerName)}</span>
+                          <span class="text-amber-500 font-bold">${'★'.repeat(r.rating)}</span>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-300">${escapeHtml(r.comment)}</p>
+                      </div>
+                    `
+                      )
+                      .join('')}
+                  </div>`
+                : `<p class="text-xs text-slate-400">No reviews yet.</p>`
+            }
+          </div>
+        </div>
+      `
+      );
+
+      const dlBtn = document.getElementById('detail-download-btn');
+      if (dlBtn) dlBtn.addEventListener('click', () => triggerProductDownload(p.id));
+
+      const cartBtn = document.getElementById('detail-cart-btn');
+      if (cartBtn) {
+        cartBtn.addEventListener('click', () => {
+          if (inCart) {
+            closeModal();
+            openCartDrawer();
+          } else {
+            addToCart(p.id);
+            openProductDetail(p.id);
+          }
+        });
+      }
+
+      const dodoBtn = document.getElementById('detail-dodo-btn');
+      if (dodoBtn && p.dodoPaymentUrl) {
+        dodoBtn.addEventListener('click', () => {
+          let url = p.dodoPaymentUrl;
+          if (acc) {
+            const sep = url.includes('?') ? '&' : '?';
+            url = `${url}${sep}email=${encodeURIComponent(acc.email)}&full_name=${encodeURIComponent(acc.name)}`;
+          }
+          window.open(url, '_blank', 'noopener,noreferrer');
+          showToast('Opened Dodo Payments checkout in a new tab.', 'info');
+        });
+      }
+
+      const buyBtn = document.getElementById('detail-buy-btn');
+      if (buyBtn) {
+        buyBtn.addEventListener('click', () => {
+          if (!state.cart.includes(p.id)) addToCart(p.id, true);
+          closeModal();
+          openCartDrawer();
+        });
+      }
+
+      const revForm = document.getElementById('review-form');
+      if (revForm) {
+        revForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.target);
+          state.reviews.unshift({
+            id: uid('rev'),
+            productId: p.id,
+            buyerId: acc.id,
+            buyerName: acc.name,
+            rating: Number(fd.get('rating')),
+            comment: fd.get('comment').trim(),
+            createdAt: new Date().toISOString(),
+          });
+          saveState();
+          openProductDetail(p.id);
+          renderAll();
+          showToast('Review posted!', 'success');
+        });
+      }
+    }
+
+    async function triggerProductDownload(productId) {
+      const p = state.products.find((x) => x.id === productId);
+      if (!p) return;
+
+      if (p.fileId) {
+        try {
+          const rec = await getFileRecord(p.fileId);
+          if (rec && rec.blob) {
+            const url = URL.createObjectURL(rec.blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = rec.name || p.fileName || `${p.title}.bin`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 5000);
+            p.downloads += 1;
+            saveState();
+            renderAll();
+            showToast(`Downloading ${a.download}...`, 'success');
+            return;
+          }
+        } catch (err) {}
+      }
+
+      if (p.externalUrl) {
+        window.open(p.externalUrl, '_blank', 'noopener,noreferrer');
+        p.downloads += 1;
+        saveState();
+        renderAll();
+        showToast('Opened external download link.', 'success');
+        return;
+      }
+
+      showToast('No downloadable file found for this listing.', 'error');
+    }
+
+    function addToCart(productId, silent = false) {
+      const acc = getActiveAccount();
+      const p = state.products.find((x) => x.id === productId);
+      if (!p) return;
+      if (acc && acc.id === p.sellerId) {
+        showToast('You are the seller of this product.', 'info');
+        return;
+      }
+      if (acc && hasPurchased(acc.id, p.id)) {
+        showToast('You already own this product! Check My Library.', 'info');
+        return;
+      }
+      if (!state.cart.includes(productId)) {
+        state.cart.push(productId);
+        saveState();
+        renderTopAndSidebar();
+        if (!silent) showToast(`Added "${p.title}" to cart.`, 'success');
+      }
+    }
+
+    function openCartDrawer() {
+      document.getElementById('cart-drawer-root').classList.remove('hidden');
+      renderCartDrawer();
+    }
+
+    function closeCartDrawer() {
+      document.getElementById('cart-drawer-root').classList.add('hidden');
+    }
+
+    function renderCartDrawer() {
+      const body = document.getElementById('cart-drawer-body');
+      const dispCur = state.settings.displayCurrency;
+      const items = state.cart.map((id) => state.products.find((p) => p.id === id)).filter(Boolean);
+
+      if (!items.length) {
+        body.innerHTML = `
+          <div class="h-full flex flex-col items-center justify-center text-center py-12">
+            <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 mb-3">
+              <i data-lucide="shopping-cart" class="w-7 h-7"></i>
+            </div>
+            <p class="font-semibold text-slate-700 dark:text-slate-200">Your cart is empty</p>
+            <p class="text-xs text-slate-400 mt-1">Browse Files, 3D Assets, Games, or Apps to add items.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      let subtotal = 0;
+      let taxableSubtotal = 0;
+      items.forEach((p) => {
+        const val = convertAmount(p.price, p.currency, dispCur);
+        subtotal += val;
+        if (!p.taxExempt) taxableSubtotal += val;
+      });
+
+      const taxPct = getTaxRatePercent();
+      const taxAmount = (taxableSubtotal * taxPct) / 100;
+      const total = subtotal + taxAmount;
+      const acc = getActiveAccount();
+
+      body.innerHTML = `
+        <div class="space-y-4">
+          <div class="space-y-2.5">
+            ${items
+              .map((p) => {
+                const priceDisp = convertAmount(p.price, p.currency, dispCur);
+                return `
+                  <div class="flex items-center justify-between gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <div class="min-w-0">
+                      <p class="text-sm font-semibold truncate">${escapeHtml(p.title)}</p>
+                      <p class="text-xs text-slate-500">${escapeHtml(p.category)} • ${p.taxExempt ? '0% Tax Eligible' : 'Standard'}</p>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                      <span class="text-sm font-bold">${p.price === 0 ? 'Free' : formatMoney(priceDisp, dispCur)}</span>
+                      <button data-remove-cart="${p.id}" class="p-1 text-slate-400 hover:text-rose-500" aria-label="Remove item">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+                `;
+              })
+              .join('')}
+          </div>
+
+          <!-- Tax Breakdown -->
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-800 space-y-2 text-sm">
+            <div class="flex justify-between text-slate-600 dark:text-slate-300">
+              <span>Subtotal</span>
+              <span>${formatMoney(subtotal, dispCur)}</span>
+            </div>
+            <div class="flex justify-between text-emerald-600 dark:text-emerald-400 font-medium">
+              <span>Tax (${taxPct}%)</span>
+              <span>${formatMoney(taxAmount, dispCur)}</span>
+            </div>
+            <div class="pt-2 border-t border-slate-200 dark:border-slate-700 flex justify-between font-bold text-base">
+              <span>Total (${dispCur})</span>
+              <span>${formatMoney(total, dispCur)}</span>
+            </div>
+            <p class="text-[11px] text-slate-500 pt-1">
+              ${taxPct === 0 ? 'Zero-tax rule active where supported by regional digital goods regulations.' : 'Custom regional tax rate applied from Settings.'}
+            </p>
+          </div>
+
+          ${
+            !acc
+              ? `<button id="cart-signin-btn" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold">Open Buyer / User Account to Checkout</button>`
+              : !canBuy(acc)
+              ? `<div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 text-xs">
+                  Seller-only accounts cannot purchase. Switch to a Buyer or User account to checkout.
+                </div>`
+              : `
+                <form id="checkout-form" class="space-y-3">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Payment Method</label>
+                    <select name="paymentMethod" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+                      <option value="Card / UPI / PayPal">Card / UPI / International Pay</option>
+                      <option value="DropDeck Wallet">DropDeck Wallet (${formatMoney(convertAmount(acc.walletUSD, 'USD', dispCur), dispCur)} available)</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-sm transition-colors">
+                    ${total === 0 ? 'Complete Free Download' : `Pay ${formatMoney(total, dispCur)} & Unlock Files`}
+                  </button>
+                </form>
+              `
+          }
+        </div>
+      `;
+
+      lucide.createIcons();
+
+      body.querySelectorAll('[data-remove-cart]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.cart = state.cart.filter((id) => id !== btn.dataset.removeCart);
+          saveState();
+          renderTopAndSidebar();
+          renderCartDrawer();
+        });
+      });
+
+      const signInBtn = document.getElementById('cart-signin-btn');
+      if (signInBtn) {
+        signInBtn.addEventListener('click', () => {
+          closeCartDrawer();
+          openAccountModal('Buyer');
+        });
+      }
+
+      const checkoutForm = document.getElementById('checkout-form');
+      if (checkoutForm) {
+        checkoutForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const method = new FormData(e.target).get('paymentMethod');
+          const totalUSD = convertAmount(total, dispCur, 'USD');
+
+          if (method === 'DropDeck Wallet' && acc.walletUSD < totalUSD) {
+            showToast('Insufficient wallet balance. Choose Card/UPI or add funds in Wallet.', 'error');
+            return;
+          }
+
+          if (method === 'DropDeck Wallet') {
+            acc.walletUSD -= totalUSD;
+          }
+
+          items.forEach((p) => {
+            const itemUSD = convertAmount(p.price, p.currency, 'USD');
+            const seller = state.accounts.find((a) => a.id === p.sellerId);
+            if (seller) {
+              seller.walletUSD = (seller.walletUSD || 0) + itemUSD;
+            }
+          });
+
+          const order = {
+            id: uid('ORD'),
+            buyerId: acc.id,
+            buyerName: acc.name,
+            currency: dispCur,
+            subtotal,
+            taxAmount,
+            total,
+            taxPercent: taxPct,
+            paymentMethod: method,
+            items: items.map((p) => ({
+              productId: p.id,
+              title: p.title,
+              category: p.category,
+              price: convertAmount(p.price, p.currency, dispCur),
+            })),
+            createdAt: new Date().toISOString(),
+          };
+
+          state.orders.unshift(order);
+          state.cart = [];
+          saveState();
+          closeCartDrawer();
+          state.ui.view = 'library';
+          renderAll();
+          showToast(`Order ${order.id} complete! Your files are unlocked in My Library.`, 'success');
+        });
+      }
+    }
+
+    // =========================================================================
+    // Rendering Views
+    // =========================================================================
+
+    function categoryIcon(cat) {
+      if (cat === '3D Assets') return 'box';
+      if (cat === 'Games') return 'gamepad-2';
+      if (cat === 'Apps') return 'app-window';
+      return 'file-archive';
+    }
+
+    function categoryGradient(cat) {
+      if (cat === '3D Assets') return 'from-violet-600 to-indigo-700';
+      if (cat === 'Games') return 'from-rose-500 to-orange-600';
+      if (cat === 'Apps') return 'from-emerald-500 to-teal-700';
+      return 'from-sky-500 to-indigo-600';
+    }
+
+    function renderTopAndSidebar() {
+      const acc = getActiveAccount();
+
+      document.getElementById('count-all').textContent = state.products.length;
+      CATEGORIES.forEach((c) => {
+        const el = document.getElementById(`count-${c}`);
+        if (el) el.textContent = state.products.filter((p) => p.category === c).length;
+      });
+
+      const libCount = acc
+        ? state.products.filter((p) => hasPurchased(acc.id, p.id)).length
+        : 0;
+      document.getElementById('count-library').textContent = libCount;
+
+      const sellerCount = acc
+        ? state.products.filter((p) => p.sellerId === acc.id).length
+        : 0;
+      document.getElementById('count-seller').textContent = sellerCount;
+
+      document.querySelectorAll('.nav-btn').forEach((btn) => {
+        const isMarket = btn.dataset.nav === 'marketplace';
+        const active =
+          (isMarket && state.ui.view === 'marketplace' && state.ui.category === btn.dataset.cat) ||
+          (!isMarket && state.ui.view === btn.dataset.nav);
+
+        btn.className = `nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
+          active
+            ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-semibold'
+            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/70'
+        }`;
+      });
+
+      const taxPct = getTaxRatePercent();
+      document.getElementById('sidebar-tax-title').textContent = taxPct === 0 ? '0% Tax Mode Active' : `${taxPct}% Custom Tax Active`;
+      document.getElementById('sidebar-tax-desc').textContent =
+        taxPct === 0
+          ? 'Tax-free digital purchases enabled where supported by regional rules.'
+          : 'Custom regional tax rate is currently applied at checkout.';
+
+      const badge = document.getElementById('cart-badge');
+      if (state.cart.length > 0) {
+        badge.textContent = state.cart.length;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+
+      const pubBtn = document.getElementById('top-publish-btn');
+      if (!acc || canSell(acc)) {
+        pubBtn.classList.remove('hidden');
+      } else {
+        pubBtn.classList.add('hidden');
+      }
+
+      const accBox = document.getElementById('sidebar-account-box');
+      if (!acc) {
+        accBox.innerHTML = `
+          <button id="sidebar-open-acc-btn" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 dark:bg-indigo-600 hover:opacity-90 text-white text-xs font-semibold flex items-center justify-center gap-2 transition-opacity">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>Open / Sign In Account</span>
+          </button>
+        `;
+        document.getElementById('sidebar-open-acc-btn').addEventListener('click', () => openAccountModal('User'));
+      } else {
+        const balDisp = formatMoney(convertAmount(acc.walletUSD, 'USD', state.settings.displayCurrency), state.settings.displayCurrency);
+        accBox.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                ${escapeHtml(acc.name.slice(0, 2).toUpperCase())}
+              </div>
+              <div class="min-w-0">
+                <p class="text-xs font-bold truncate">${escapeHtml(acc.name)}</p>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] font-semibold px-1.5 py-0.2 rounded ${roleBadgeClass(acc.role)}">${acc.role}</span>
+                  <span class="text-[11px] text-slate-500 truncate">${balDisp}</span>
+                </div>
+              </div>
+            </div>
+            <button id="sidebar-switch-acc-btn" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 dark:hover:bg-slate-800" title="Switch or create account">
+              <i data-lucide="arrow-left-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+        document.getElementById('sidebar-switch-acc-btn').addEventListener('click', () => openAccountModal('User'));
+      }
+    }
+
+    function renderMainView() {
+      const main = document.getElementById('main-view');
+      if (state.ui.view === 'marketplace') renderMarketplace(main);
+      else if (state.ui.view === 'library') renderLibrary(main);
+      else if (state.ui.view === 'seller') renderSellerStudio(main);
+      else if (state.ui.view === 'wallet') renderWalletAndOrders(main);
+      else if (state.ui.view === 'settings') renderSettings(main);
+      lucide.createIcons();
+    }
+
+    function renderMarketplace(container) {
+      const dispCur = state.settings.displayCurrency;
+      const q = state.ui.search.trim().toLowerCase();
+
+      let list = state.products.filter((p) => {
+        if (state.ui.category !== 'all' && p.category !== state.ui.category) return false;
+        if (state.ui.taxFreeOnly && !p.taxExempt) return false;
+        const priceDisp = convertAmount(p.price, p.currency, dispCur);
+        if (state.ui.priceFilter === 'free' && p.price > 0) return false;
+        if (state.ui.priceFilter === 'paid' && p.price === 0) return false;
+        if (state.ui.priceFilter === 'range') {
+          const min = state.ui.minPrice !== '' ? Number(state.ui.minPrice) : 0;
+          const max = state.ui.maxPrice !== '' ? Number(state.ui.maxPrice) : Infinity;
+          if (priceDisp < min || priceDisp > max) return false;
+        }
+        if (q) {
+          const hay = `${p.title} ${p.description} ${p.format} ${p.sellerName} ${p.tags.join(' ')}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      list.sort((a, b) => {
+        if (state.ui.sort === 'price_asc') {
+          return convertAmount(a.price, a.currency, dispCur) - convertAmount(b.price, b.currency, dispCur);
+        }
+        if (state.ui.sort === 'price_desc') {
+          return convertAmount(b.price, b.currency, dispCur) - convertAmount(a.price, a.currency, dispCur);
+        }
+        if (state.ui.sort === 'popular') return b.downloads - a.downloads;
+        if (state.ui.sort === 'rating') return getProductRating(b.id).avg - getProductRating(a.id).avg;
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+
+      const hasFilters =
+        state.ui.category !== 'all' ||
+        state.ui.priceFilter !== 'all' ||
+        state.ui.taxFreeOnly ||
+        q.length > 0;
+
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="flex flex-col gap-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h1 class="text-2xl font-extrabold tracking-tight">${state.ui.category === 'all' ? 'Marketplace' : escapeHtml(state.ui.category)}</h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                  ${list.length} ${list.length === 1 ? 'listing' : 'listings'} • Prices shown in ${dispCur} • ${getTaxRatePercent() === 0 ? '0% Tax Eligible' : `${getTaxRatePercent()}% Tax`}
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <select id="sort-select" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm font-medium focus:outline-none focus:border-indigo-500">
+                  <option value="newest" ${state.ui.sort === 'newest' ? 'selected' : ''}>Sort: Newest</option>
+                  <option value="price_asc" ${state.ui.sort === 'price_asc' ? 'selected' : ''}>Price: Low to High</option>
+                  <option value="price_desc" ${state.ui.sort === 'price_desc' ? 'selected' : ''}>Price: High to Low</option>
+                  <option value="popular" ${state.ui.sort === 'popular' ? 'selected' : ''}>Most Downloaded</option>
+                  <option value="rating" ${state.ui.sort === 'rating' ? 'selected' : ''}>Highest Rated</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="flex flex-wrap items-center gap-2.5 p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <select id="price-filter-select" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold">
+                <option value="all" ${state.ui.priceFilter === 'all' ? 'selected' : ''}>All Prices</option>
+                <option value="free" ${state.ui.priceFilter === 'free' ? 'selected' : ''}>Free Only</option>
+                <option value="paid" ${state.ui.priceFilter === 'paid' ? 'selected' : ''}>Paid Only</option>
+                <option value="range" ${state.ui.priceFilter === 'range' ? 'selected' : ''}>Custom Range (${dispCur})</option>
+              </select>
+
+              ${
+                state.ui.priceFilter === 'range'
+                  ? `
+                <div class="flex items-center gap-1.5">
+                  <input id="min-price-input" type="number" min="0" placeholder="Min" value="${escapeHtml(state.ui.minPrice)}" class="w-20 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs" />
+                  <span class="text-xs text-slate-400">–</span>
+                  <input id="max-price-input" type="number" min="0" placeholder="Max" value="${escapeHtml(state.ui.maxPrice)}" class="w-20 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs" />
+                </div>
+              `
+                  : ''
+              }
+
+              <label class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold cursor-pointer">
+                <input id="tax-free-filter" type="checkbox" ${state.ui.taxFreeOnly ? 'checked' : ''} class="rounded text-emerald-600 focus:ring-emerald-500" />
+                <span>0% Tax Only</span>
+              </label>
+
+              ${
+                hasFilters
+                  ? `<button id="reset-filters-btn" class="ml-auto text-xs font-semibold text-indigo-600 hover:text-indigo-700 px-2 py-1">Clear Filters</button>`
+                  : ''
+              }
+            </div>
+          </div>
+
+          ${
+            list.length === 0
+              ? `
+              <div class="rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-10 sm:p-14 text-center max-w-2xl mx-auto">
+                <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4">
+                  <i data-lucide="${state.products.length === 0 ? 'rocket' : 'search-x'}" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-2">
+                  ${state.products.length === 0 ? 'DropDeck is ready for your first real listing' : 'No matching listings found'}
+                </h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-md mx-auto">
+                  ${
+                    state.products.length === 0
+                      ? 'No demo or filler listings exist here. Open a Buyer, Seller, or User account and publish your first real File, 3D Asset, Game, or App.'
+                      : 'Try adjusting your search query, price range, or category filters.'
+                  }
+                </p>
+                <div class="flex flex-wrap items-center justify-center gap-3">
+                  ${
+                    !getActiveAccount()
+                      ? `<button id="empty-open-acc-btn" class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-semibold">Open Account</button>`
+                      : ''
+                  }
+                  <button id="empty-publish-btn" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-xs">
+                    ${state.products.length === 0 ? '+ Publish First Product' : 'Clear Filters'}
+                  </button>
+                </div>
+              </div>
+            `
+              : `
+              <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                ${list.map((p) => renderProductCard(p, dispCur)).join('')}
+              </div>
+            `
+          }
+        </div>
+      `;
+
+      document.getElementById('sort-select').addEventListener('change', (e) => {
+        state.ui.sort = e.target.value;
+        saveState();
+        renderMainView();
+      });
+      document.getElementById('price-filter-select').addEventListener('change', (e) => {
+        state.ui.priceFilter = e.target.value;
+        saveState();
+        renderMainView();
+      });
+      const minIn = document.getElementById('min-price-input');
+      if (minIn) {
+        minIn.addEventListener('input', (e) => {
+          state.ui.minPrice = e.target.value;
+          saveState();
+          renderMainView();
+        });
+      }
+      const maxIn = document.getElementById('max-price-input');
+      if (maxIn) {
+        maxIn.addEventListener('input', (e) => {
+          state.ui.maxPrice = e.target.value;
+          saveState();
+          renderMainView();
+        });
+      }
+      document.getElementById('tax-free-filter').addEventListener('change', (e) => {
+        state.ui.taxFreeOnly = e.target.checked;
+        saveState();
+        renderMainView();
+      });
+      const resetBtn = document.getElementById('reset-filters-btn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          state.ui.category = 'all';
+          state.ui.priceFilter = 'all';
+          state.ui.minPrice = '';
+          state.ui.maxPrice = '';
+          state.ui.taxFreeOnly = false;
+          state.ui.search = '';
+          document.getElementById('search-input').value = '';
+          saveState();
+          renderAll();
+        });
+      }
+
+      const emptyAcc = document.getElementById('empty-open-acc-btn');
+      if (emptyAcc) emptyAcc.addEventListener('click', () => openAccountModal('User'));
+      const emptyPub = document.getElementById('empty-publish-btn');
+      if (emptyPub) {
+        emptyPub.addEventListener('click', () => {
+          if (state.products.length === 0) openPublishModal();
+          else if (resetBtn) resetBtn.click();
+        });
+      }
+
+      container.querySelectorAll('[data-open-prod]').forEach((el) => {
+        el.addEventListener('click', () => openProductDetail(el.dataset.openProd));
+      });
+      container.querySelectorAll('[data-quick-cart]').forEach((el) => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          addToCart(el.dataset.quickCart);
+        });
+      });
+    }
+
+    function renderProductCard(p, dispCur) {
+      const priceDisp = convertAmount(p.price, p.currency, dispCur);
+      const rating = getProductRating(p.id);
+      return `
+        <article data-open-prod="${p.id}" class="group cursor-pointer rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg hover:border-indigo-300 dark:hover:border-indigo-700 transition-all flex flex-col">
+          <div class="relative aspect-[16/10] bg-slate-100 dark:bg-slate-800 overflow-hidden">
+            ${
+              p.thumbnail
+                ? `<img src="${p.thumbnail}" alt="${escapeHtml(p.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />`
+                : `<div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br ${categoryGradient(p.category)} text-white">
+                    <i data-lucide="${categoryIcon(p.category)}" class="w-10 h-10 mb-1.5 opacity-90"></i>
+                    <span class="text-xs font-semibold opacity-90">${escapeHtml(p.format)}</span>
+                  </div>`
+            }
+            <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-900/75 text-white backdrop-blur-xs">${escapeHtml(p.category)}</span>
+              ${p.taxExempt ? `<span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-600/90 text-white">0% Tax</span>` : ''}
+            </div>
+          </div>
+
+          <div class="p-4 flex-1 flex flex-col">
+            <div class="flex items-start justify-between gap-2 mb-1">
+              <h3 class="font-bold text-base text-slate-900 dark:text-white group-hover:text-indigo-600 transition-colors line-clamp-2">${escapeHtml(p.title)}</h3>
+              <span class="shrink-0 font-extrabold text-sm px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">
+                ${p.price === 0 ? 'Free' : formatMoney(priceDisp, dispCur)}
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-3">${escapeHtml(p.description)}</p>
+
+            <div class="mt-auto pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+              <span class="truncate max-w-[140px]">by <strong class="text-slate-700 dark:text-slate-300">${escapeHtml(p.sellerName)}</strong></span>
+              <div class="flex items-center gap-2.5">
+                <span class="flex items-center gap-1 text-amber-500 font-semibold">
+                  <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                  ${rating.count ? rating.avg.toFixed(1) : '—'}
+                </span>
+                <button data-quick-cart="${p.id}" class="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-colors" title="Add to Cart">
+                  <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderLibrary(container) {
+      const acc = getActiveAccount();
+      if (!acc) {
+        container.innerHTML = renderNeedAccountCard('My Library', 'Open a Buyer or User account to view and download your purchased Files, 3D Assets, Games, and Apps.');
+        bindNeedAccountBtn('Buyer');
+        return;
+      }
+
+      const purchased = state.products.filter((p) => hasPurchased(acc.id, p.id));
+
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div>
+            <h1 class="text-2xl font-extrabold tracking-tight">My Library</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Your purchased digital products, ready for instant download.</p>
+          </div>
+          ${
+            purchased.length === 0
+              ? `<div class="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-10 text-center">
+                  <p class="font-semibold mb-1">No purchased items yet</p>
+                  <p class="text-xs text-slate-500 mb-4">Items you buy from the Marketplace will appear here with instant file downloads.</p>
+                  <button id="lib-browse-btn" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold">Browse Marketplace</button>
+                </div>`
+              : `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  ${purchased
+                    .map(
+                      (p) => `
+                    <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+                      <div class="min-w-0">
+                        <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">${escapeHtml(p.category)} • ${escapeHtml(p.format)}</span>
+                        <h3 class="font-bold text-base truncate">${escapeHtml(p.title)}</h3>
+                        <p class="text-xs text-slate-500">${p.fileSize ? formatBytes(p.fileSize) : 'External URL'} • ${escapeHtml(p.license)}</p>
+                      </div>
+                      <button data-dl-prod="${p.id}" class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span>Download</span>
+                      </button>
+                    </div>
+                  `
+                    )
+                    .join('')}
+                </div>`
+          }
+        </div>
+      `;
+
+      const browseBtn = document.getElementById('lib-browse-btn');
+      if (browseBtn) {
+        browseBtn.addEventListener('click', () => {
+          state.ui.view = 'marketplace';
+          renderAll();
+        });
+      }
+      container.querySelectorAll('[data-dl-prod]').forEach((btn) => {
+        btn.addEventListener('click', () => triggerProductDownload(btn.dataset.dlProd));
+      });
+    }
+
+    function renderSellerStudio(container) {
+      const acc = getActiveAccount();
+      if (!acc) {
+        container.innerHTML = renderNeedAccountCard('Seller Studio', 'Open a Seller or User account to publish Files, 3D Assets, Games, and Apps for real money.');
+        bindNeedAccountBtn('Seller');
+        return;
+      }
+      if (!canSell(acc)) {
+        container.innerHTML = `
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 text-center max-w-lg mx-auto">
+            <h2 class="text-lg font-bold mb-2">Buyer-Only Account</h2>
+            <p class="text-sm text-slate-500 mb-4">Your current account (${escapeHtml(acc.name)}) is set to Buyer only. Upgrade to a User (Buyer + Seller) role in Settings or create a Seller account.</p>
+            <button id="go-settings-role" class="px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold">Go to Settings</button>
+          </div>
+        `;
+        document.getElementById('go-settings-role').addEventListener('click', () => {
+          state.ui.view = 'settings';
+          renderAll();
+        });
+        return;
+      }
+
+      const myProducts = state.products.filter((p) => p.sellerId === acc.id);
+      const dispCur = state.settings.displayCurrency;
+      const totalDownloads = myProducts.reduce((s, p) => s + p.downloads, 0);
+
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h1 class="text-2xl font-extrabold tracking-tight">Seller Studio</h1>
+              <p class="text-sm text-slate-500 dark:text-slate-400">Manage your published Files, 3D Assets, Games & Apps.</p>
+            </div>
+            <button id="studio-publish-btn" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-xs">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>Publish New Product</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <p class="text-xs font-medium text-slate-500">Active Listings</p>
+              <p class="text-2xl font-extrabold mt-1">${myProducts.length}</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <p class="text-xs font-medium text-slate-500">Total Downloads</p>
+              <p class="text-2xl font-extrabold mt-1">${totalDownloads}</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <p class="text-xs font-medium text-slate-500">Wallet Earnings</p>
+              <p class="text-2xl font-extrabold mt-1 text-emerald-600 dark:text-emerald-400">${formatMoney(convertAmount(acc.walletUSD, 'USD', dispCur), dispCur)}</p>
+            </div>
+          </div>
+
+          ${
+            myProducts.length === 0
+              ? `<div class="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-10 text-center">
+                  <p class="font-semibold mb-1">You haven't published any products yet</p>
+                  <p class="text-xs text-slate-500 mb-4">Attach a real file, set your price in any of 12 currencies, and go live.</p>
+                </div>`
+              : `<div class="space-y-3">
+                  ${myProducts
+                    .map(
+                      (p) => `
+                    <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
+                      <div class="min-w-0">
+                        <div class="flex items-center gap-2 text-xs text-slate-500 mb-0.5">
+                          <span class="font-semibold text-indigo-600 dark:text-indigo-400">${escapeHtml(p.category)}</span>
+                          <span>•</span>
+                          <span>${escapeHtml(p.format)}</span>
+                          <span>•</span>
+                          <span>${p.downloads} downloads</span>
+                        </div>
+                        <h3 class="font-bold text-base truncate">${escapeHtml(p.title)}</h3>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <span class="font-bold text-sm mr-2">${p.price === 0 ? 'Free' : formatMoney(p.price, p.currency)}</span>
+                        <button data-edit-prod="${p.id}" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800">Edit</button>
+                        <button data-del-prod="${p.id}" class="px-3 py-1.5 rounded-lg border border-rose-200 dark:border-rose-900/50 text-rose-600 text-xs font-semibold hover:bg-rose-50 dark:hover:bg-rose-950/30">Delete</button>
+                      </div>
+                    </div>
+                  `
+                    )
+                    .join('')}
+                </div>`
+          }
+        </div>
+      `;
+
+      document.getElementById('studio-publish-btn').addEventListener('click', () => openPublishModal());
+      container.querySelectorAll('[data-edit-prod]').forEach((btn) => {
+        btn.addEventListener('click', () => openPublishModal(btn.dataset.editProd));
+      });
+      container.querySelectorAll('[data-del-prod]').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const target = state.products.find((p) => p.id === btn.dataset.delProd);
+          if (target && target.fileId) await deleteFileRecord(target.fileId);
+          state.products = state.products.filter((p) => p.id !== btn.dataset.delProd);
+          state.cart = state.cart.filter((id) => id !== btn.dataset.delProd);
+          saveState();
+          renderAll();
+          showToast('Listing removed.', 'info');
+        });
+      });
+    }
+
+    function renderWalletAndOrders(container) {
+      const acc = getActiveAccount();
+      if (!acc) {
+        container.innerHTML = renderNeedAccountCard('Wallet & Orders', 'Open an account to manage your balance, payouts, and purchase receipts.');
+        bindNeedAccountBtn('User');
+        return;
+      }
+
+      const dispCur = state.settings.displayCurrency;
+      const balDisp = convertAmount(acc.walletUSD, 'USD', dispCur);
+      const myOrders = state.orders.filter((o) => o.buyerId === acc.id);
+
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div>
+            <h1 class="text-2xl font-extrabold tracking-tight">Wallet & Orders</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Manage funds, seller payouts, and transaction receipts.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="p-6 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 text-white shadow-md">
+              <p class="text-xs font-semibold uppercase tracking-wider opacity-80">Available Balance (${dispCur})</p>
+              <p class="text-3xl font-extrabold mt-1">${formatMoney(balDisp, dispCur)}</p>
+              <p class="text-xs opacity-80 mt-2">Payout Handle: ${acc.payoutHandle ? escapeHtml(acc.payoutHandle) : 'Not configured (set in Settings)'}</p>
+              <div class="flex flex-wrap gap-2 mt-5">
+                <button id="wallet-add-btn" class="px-4 py-2 rounded-xl bg-white text-indigo-700 text-xs font-bold hover:bg-indigo-50">+ Add Funds</button>
+                <button id="wallet-withdraw-btn" class="px-4 py-2 rounded-xl bg-indigo-500/40 border border-white/30 text-white text-xs font-bold hover:bg-indigo-500/60">Request Payout</button>
+              </div>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
+              <div>
+                <h3 class="font-bold text-sm mb-1">Zero-Tax Compliance Summary</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  DropDeck applies <strong>${getTaxRatePercent()}% tax</strong> based on your active jurisdiction rule in Settings. All receipts record exact subtotal, tax, and currency totals.
+                </p>
+              </div>
+              <button id="wallet-tax-settings-btn" class="mt-4 self-start text-xs font-semibold text-indigo-600 hover:underline">Configure Tax & Gateway Rules →</button>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <h2 class="text-lg font-bold">Order History (${myOrders.length})</h2>
+            ${
+              myOrders.length === 0
+                ? `<p class="text-sm text-slate-500">No orders placed yet with this account.</p>`
+                : myOrders
+                    .map(
+                      (o) => `
+                  <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                      <p class="text-sm font-bold">${escapeHtml(o.id)} • ${o.items.map((i) => escapeHtml(i.title)).join(', ')}</p>
+                      <p class="text-xs text-slate-500">${new Date(o.createdAt).toLocaleString()} • ${escapeHtml(o.paymentMethod)} • Tax: ${o.taxPercent}%</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <span class="font-extrabold text-sm">${formatMoney(o.total, o.currency)}</span>
+                      <button data-dl-receipt="${o.id}" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800">Receipt</button>
+                    </div>
+                  </div>
+                `
+                    )
+                    .join('')
+            }
+          </div>
+        </div>
+      `;
+
+      document.getElementById('wallet-tax-settings-btn').addEventListener('click', () => {
+        state.ui.view = 'settings';
+        renderAll();
+      });
+
+      document.getElementById('wallet-add-btn').addEventListener('click', () => {
+        openModal(
+          'Add Funds to DropDeck Wallet',
+          `
+          <form id="add-funds-form" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold mb-1.5">Amount (${dispCur})</label>
+              <input name="amount" type="number" min="1" step="0.01" required placeholder="50.00" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm" />
+            </div>
+            <button type="submit" class="w-full py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold">Confirm Deposit</button>
+          </form>
+        `,
+          'max-w-md'
+        );
+        document.getElementById('add-funds-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const amt = Number(new FormData(e.target).get('amount')) || 0;
+          if (amt <= 0) return;
+          acc.walletUSD = (acc.walletUSD || 0) + convertAmount(amt, dispCur, 'USD');
+          saveState();
+          closeModal();
+          renderAll();
+          showToast(`Added ${formatMoney(amt, dispCur)} to wallet.`, 'success');
+        });
+      });
+
+      document.getElementById('wallet-withdraw-btn').addEventListener('click', () => {
+        if (!acc.payoutHandle) {
+          showToast('Please set a Payout Handle (UPI / PayPal / Bank) in Settings first.', 'error');
+          return;
+        }
+        if ((acc.walletUSD || 0) <= 0) {
+          showToast('No balance available to withdraw.', 'error');
+          return;
+        }
+        const paidOut = formatMoney(balDisp, dispCur);
+        acc.walletUSD = 0;
+        saveState();
+        renderAll();
+        showToast(`Payout of ${paidOut} queued to ${acc.payoutHandle}.`, 'success');
+      });
+
+      container.querySelectorAll('[data-dl-receipt]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const o = state.orders.find((x) => x.id === btn.dataset.dlReceipt);
+          if (!o) return;
+          const text = [
+            `DROPDECK OFFICIAL RECEIPT`,
+            `Order ID: ${o.id}`,
+            `Date: ${new Date(o.createdAt).toISOString()}`,
+            `Buyer: ${o.buyerName}`,
+            `Payment Method: ${o.paymentMethod}`,
+            `----------------------------------------`,
+            ...o.items.map((it) => `- ${it.title} (${it.category}): ${formatMoney(it.price, o.currency)}`),
+            `----------------------------------------`,
+            `Subtotal: ${formatMoney(o.subtotal, o.currency)}`,
+            `Tax (${o.taxPercent}%): ${formatMoney(o.taxAmount, o.currency)}`,
+            `Total Paid: ${formatMoney(o.total, o.currency)}`,
+          ].join('\n');
+          const blob = new Blob([text], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${o.id}_receipt.txt`;
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 3000);
+        });
+      });
+    }
+
+    function renderSettings(container) {
+      const acc = getActiveAccount();
+      const s = state.settings;
+
+      container.innerHTML = `
+        <div class="space-y-6 max-w-4xl">
+          <div>
+            <h1 class="text-2xl font-extrabold tracking-tight">Settings</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Configure currencies, zero-tax rules, account role, payment gateway, and data backups.</p>
+          </div>
+
+          <section class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
+            <h2 class="text-base font-bold">Display & Currency</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Default Currency (12 Supported)</label>
+                <select id="set-currency" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+                  ${Object.keys(CURRENCIES)
+                    .map((c) => `<option value="${c}" ${s.displayCurrency === c ? 'selected' : ''}>${c} — ${CURRENCIES[c].name}</option>`)
+                    .join('')}
+                </select>
+              </div>
+              <div class="flex items-end">
+                <label class="w-full flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer">
+                  <span class="text-sm font-medium">Dark Mode</span>
+                  <input id="set-darkmode" type="checkbox" ${s.darkMode ? 'checked' : ''} class="rounded text-indigo-600" />
+                </label>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <button id="refresh-fx-btn" class="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800">
+                Refresh Live FX Rates
+              </button>
+              <span class="text-xs text-slate-400">Supports USD, INR, EUR, JPY, GBP, CNY, CNH, AUD, CAD, CHF, HKD, SGD</span>
+            </div>
+          </section>
+
+          <section class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="text-base font-bold">Tax & Zero-Tax Rules</h2>
+              <label class="inline-flex items-center gap-2 text-xs font-semibold cursor-pointer">
+                <input id="set-zerotax" type="checkbox" ${s.zeroTaxEnabled ? 'checked' : ''} class="rounded text-emerald-600" />
+                <span>Enable 0% Tax Where Supported</span>
+              </label>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Jurisdiction / Exemption Rule</label>
+                <select id="set-taxrule" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+                  ${TAX_JURISDICTIONS.map((r) => `<option value="${r.id}" ${s.taxRuleId === r.id ? 'selected' : ''}>${r.name}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Custom Tax % (when 0% mode is off)</label>
+                <input id="set-customtax" type="number" min="0" max="50" step="0.1" value="${s.customTaxRate}" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm" />
+              </div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              ${escapeHtml((TAX_JURISDICTIONS.find((r) => r.id === s.taxRuleId) || TAX_JURISDICTIONS[0]).note)}
+            </p>
+          </section>
+
+          ${
+            acc
+              ? `
+            <section class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
+              <h2 class="text-base font-bold">Active Account (${escapeHtml(acc.name)})</h2>
+              <form id="acc-settings-form" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Account Role</label>
+                  <select name="role" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+                    <option value="Buyer" ${acc.role === 'Buyer' ? 'selected' : ''}>Buyer Only</option>
+                    <option value="Seller" ${acc.role === 'Seller' ? 'selected' : ''}>Seller Only</option>
+                    <option value="User" ${acc.role === 'User' ? 'selected' : ''}>User (Buyer + Seller)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Payout Handle (UPI / PayPal / Bank)</label>
+                  <input name="payoutHandle" value="${escapeHtml(acc.payoutHandle || '')}" type="text" placeholder="e.g. name@upi" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm" />
+                </div>
+                <div class="flex items-end">
+                  <button type="submit" class="w-full py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700">Save Account</button>
+                </div>
+              </form>
+            </section>
+          `
+              : ''
+          }
+
+          <section class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
+            <h2 class="text-base font-bold">GitHub Pages Global Catalog & Dodo Payments</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Publish this file as <code>index.html</code> on GitHub Pages for free global hosting. To let visitors worldwide see your listings, export <code>catalog.json</code> below and upload it to the same GitHub repository. Attach each product's Dodo Payments checkout link (<code>https://checkout.dodopayments.com/buy/...</code>) when publishing.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Remote Catalog JSON URL</label>
+                <input id="set-catalog-url" type="text" value="${escapeHtml(s.catalogUrl || './catalog.json')}" placeholder="./catalog.json" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs" />
+              </div>
+              <div class="flex items-end">
+                <button id="sync-catalog-btn" class="w-full py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold">Sync Catalog Now</button>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-3 pt-1">
+              <button id="export-catalog-btn" class="px-4 py-2 rounded-xl bg-slate-900 dark:bg-slate-800 text-white text-xs font-semibold hover:opacity-90">Export catalog.json for GitHub</button>
+              <button id="export-data-btn" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800">Export Full Backup JSON</button>
+              <label class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer">
+                Import Marketplace JSON
+                <input id="import-data-input" type="file" accept=".json" class="hidden" />
+              </label>
+              <button id="reset-all-btn" class="px-4 py-2 rounded-xl border border-rose-200 dark:border-rose-900/50 text-rose-600 text-xs font-semibold hover:bg-rose-50 dark:hover:bg-rose-950/30">Reset All Data</button>
+            </div>
+          </section>
+        </div>
+      `;
+
+      document.getElementById('set-currency').addEventListener('change', (e) => {
+        state.settings.displayCurrency = e.target.value;
+        saveState();
+        renderAll();
+      });
+      document.getElementById('set-darkmode').addEventListener('change', (e) => {
+        state.settings.darkMode = e.target.checked;
+        applyTheme();
+        saveState();
+      });
+      document.getElementById('set-zerotax').addEventListener('change', (e) => {
+        state.settings.zeroTaxEnabled = e.target.checked;
+        saveState();
+        renderAll();
+      });
+      document.getElementById('set-taxrule').addEventListener('change', (e) => {
+        state.settings.taxRuleId = e.target.value;
+        saveState();
+        renderAll();
+      });
+      document.getElementById('set-customtax').addEventListener('change', (e) => {
+        state.settings.customTaxRate = Number(e.target.value) || 0;
+        saveState();
+        renderAll();
+      });
+
+      document.getElementById('refresh-fx-btn').addEventListener('click', async () => {
+        try {
+          const res = await fetch('https://open.er-api.com/v6/latest/USD');
+          if (!res.ok) throw new Error('FX fetch failed');
+          const data = await res.json();
+          if (data && data.rates) {
+            Object.keys(CURRENCIES).forEach((code) => {
+              if (data.rates[code]) state.settings.customRates[code] = data.rates[code];
+            });
+            saveState();
+            renderAll();
+            showToast('Live exchange rates updated!', 'success');
+          }
+        } catch (err) {
+          showToast('Could not reach live FX API; using built-in rates.', 'info');
+        }
+      });
+
+      const accForm = document.getElementById('acc-settings-form');
+      if (accForm) {
+        accForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.target);
+          acc.role = fd.get('role');
+          acc.payoutHandle = fd.get('payoutHandle').trim();
+          saveState();
+          renderAll();
+          showToast('Account settings updated.', 'success');
+        });
+      }
+
+      document.getElementById('set-catalog-url').addEventListener('change', (e) => {
+        state.settings.catalogUrl = e.target.value.trim() || './catalog.json';
+        saveState();
+      });
+
+      document.getElementById('sync-catalog-btn').addEventListener('click', () => {
+        syncRemoteCatalog(false);
+      });
+
+      document.getElementById('export-catalog-btn').addEventListener('click', () => {
+        const publicProducts = state.products.map(({ fileId, ...rest }) => rest);
+        const blob = new Blob([JSON.stringify({ products: publicProducts }, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'catalog.json';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 3000);
+        showToast('Exported catalog.json — upload it next to index.html on GitHub!', 'success');
+      });
+
+      document.getElementById('export-data-btn').addEventListener('click', () => {
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `dropdeck_backup_${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 3000);
+      });
+
+      document.getElementById('import-data-input').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          const parsed = JSON.parse(text);
+          if (parsed && Array.isArray(parsed.products) && Array.isArray(parsed.accounts)) {
+            state = { ...structuredClone(DEFAULT_STATE), ...parsed };
+            saveState();
+            applyTheme();
+            renderAll();
+            showToast('Marketplace data imported!', 'success');
+          } else {
+            showToast('Invalid DropDeck backup file.', 'error');
+          }
+        } catch (err) {
+          showToast('Failed to parse JSON file.', 'error');
+        }
+      });
+
+      document.getElementById('reset-all-btn').addEventListener('click', () => {
+        openModal(
+          'Confirm Reset',
+          `
+          <p class="text-sm text-slate-600 dark:text-slate-300 mb-5">This will permanently clear all local accounts, listings, orders, and settings in DropDeck.</p>
+          <div class="flex justify-end gap-3">
+            <button id="cancel-reset-btn" class="px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700">Cancel</button>
+            <button id="confirm-reset-btn" class="px-4 py-2 rounded-xl text-sm font-semibold bg-rose-600 text-white">Reset Everything</button>
+          </div>
+        `,
+          'max-w-md'
+        );
+        document.getElementById('cancel-reset-btn').addEventListener('click', closeModal);
+        document.getElementById('confirm-reset-btn').addEventListener('click', () => {
+          state = structuredClone(DEFAULT_STATE);
+          saveState();
+          applyTheme();
+          closeModal();
+          renderAll();
+          showToast('DropDeck has been reset.', 'info');
+        });
+      });
+    }
+
+    function renderNeedAccountCard(title, desc) {
+      return `
+        <div class="rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-10 text-center max-w-lg mx-auto mt-6">
+          <h2 class="text-xl font-bold mb-2">${escapeHtml(title)}</h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">${escapeHtml(desc)}</p>
+          <button id="need-acc-btn" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold">Open / Sign In Account</button>
+        </div>
+      `;
+    }
+
+    function bindNeedAccountBtn(defaultRole) {
+      const btn = document.getElementById('need-acc-btn');
+      if (btn) btn.addEventListener('click', () => openAccountModal(defaultRole));
+    }
+
+    function applyTheme() {
+      if (state.settings.darkMode) document.documentElement.classList.add('dark');
+      else document.documentElement.classList.remove('dark');
+    }
+
+    function populateCurrencyDropdown() {
+      const sel = document.getElementById('currency-select');
+      sel.innerHTML = Object.keys(CURRENCIES)
+        .map((c) => `<option value="${c}" ${c === state.settings.displayCurrency ? 'selected' : ''}>${c} (${CURRENCIES[c].symbol.trim()})</option>`)
+        .join('');
+    }
+
+    function renderAll() {
+      populateCurrencyDropdown();
+      renderTopAndSidebar();
+      renderMainView();
+      lucide.createIcons();
+    }
+
+    function init() {
+      applyTheme();
+
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      const toggleSidebar = (open) => {
+        if (open) {
+          sidebar.classList.remove('-translate-x-full');
+          backdrop.classList.remove('hidden');
+        } else {
+          sidebar.classList.add('-translate-x-full');
+          backdrop.classList.add('hidden');
+        }
+      };
+
+      document.getElementById('open-sidebar-btn').addEventListener('click', () => toggleSidebar(true));
+      document.getElementById('close-sidebar-btn').addEventListener('click', () => toggleSidebar(false));
+      backdrop.addEventListener('click', () => toggleSidebar(false));
+
+      document.getElementById('brand-home-btn').addEventListener('click', () => {
+        state.ui.view = 'marketplace';
+        state.ui.category = 'all';
+        saveState();
+        renderAll();
+        toggleSidebar(false);
+      });
+
+      document.querySelectorAll('.nav-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.ui.view = btn.dataset.nav;
+          if (btn.dataset.cat) state.ui.category = btn.dataset.cat;
+          saveState();
+          renderAll();
+          toggleSidebar(false);
+        });
+      });
+
+      const searchIn = document.getElementById('search-input');
+      const clearSearchBtn = document.getElementById('clear-search-btn');
+      searchIn.value = state.ui.search || '';
+      if (searchIn.value) clearSearchBtn.classList.remove('hidden');
+
+      searchIn.addEventListener('input', (e) => {
+        state.ui.search = e.target.value;
+        if (state.ui.search) clearSearchBtn.classList.remove('hidden');
+        else clearSearchBtn.classList.add('hidden');
+        if (state.ui.view !== 'marketplace') state.ui.view = 'marketplace';
+        saveState();
+        renderAll();
+      });
+
+      clearSearchBtn.addEventListener('click', () => {
+        searchIn.value = '';
+        state.ui.search = '';
+        clearSearchBtn.classList.add('hidden');
+        saveState();
+        renderAll();
+      });
+
+      document.getElementById('currency-select').addEventListener('change', (e) => {
+        state.settings.displayCurrency = e.target.value;
+        saveState();
+        renderAll();
+      });
+
+      document.getElementById('top-publish-btn').addEventListener('click', () => openPublishModal());
+      document.getElementById('cart-btn').addEventListener('click', openCartDrawer);
+      document.getElementById('close-cart-btn').addEventListener('click', closeCartDrawer);
+      document.getElementById('cart-drawer-backdrop').addEventListener('click', closeCartDrawer);
+
+      document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+      document.getElementById('modal-root').addEventListener('click', (e) => {
+        if (e.target.id === 'modal-root') closeModal();
+      });
+
+      renderAll();
+      syncRemoteCatalog(true);
+    }
+
+    async function syncRemoteCatalog(silent = true) {
+      const url = (state.settings.catalogUrl || './catalog.json').trim();
+      if (!url) return;
+      try {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) {
+          if (!silent) showToast('No catalog.json found at that URL.', 'info');
+          return;
+        }
+        const data = await res.json();
+        const remoteList = Array.isArray(data) ? data : (Array.isArray(data.products) ? data.products : []);
+        let added = 0;
+        remoteList.forEach((rp) => {
+          if (rp && rp.id && !state.products.some((lp) => lp.id === rp.id)) {
+            state.products.push(rp);
+            added++;
+          }
+        });
+        if (added > 0) {
+          saveState();
+          renderAll();
+          showToast(`Synced ${added} global listing(s) from catalog.json.`, 'success');
+        } else if (!silent) {
+          showToast('Catalog is already up to date.', 'info');
+        }
+      } catch (err) {
+        if (!silent) showToast('Could not fetch remote catalog.json.', 'info');
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
